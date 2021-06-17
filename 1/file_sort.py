@@ -67,42 +67,48 @@ extensions = {
     "gif": ["gif"],
 }
 
+
 def get_key_by_value(ext: str) -> str:
     for key, value in extensions.items():
         if ext in value:
             return key
-    
-    return 'EMPTY'
+
+    return "EMPTY"
+
 
 def create_folders(sorted_folder_path: str) -> None:
     for key in extensions:
-        pathlib.Path(sorted_folder_path + '/' + key).mkdir(exist_ok=True)
+        pathlib.Path(sorted_folder_path + "/" + key).mkdir(exist_ok=True)
+
 
 def sort_files(download_path: str):
     filenames = []
     (_, _, filenames) = next(os.walk(download_path), (None, None, []))
     for filename in filenames:
-        file_extension = filename.split('.')[-1]
+        file_extension = filename.split(".")[-1]
         file_type = get_key_by_value(file_extension)
-        
-        if file_type != 'EMPTY':
-            os.replace(download_path + '/' + filename, download_path + '/sorted/' + file_type + '/' + filename)
+
+        if file_type != "EMPTY":
+            os.replace(
+                download_path + "/" + filename,
+                download_path + "/sorted/" + file_type + "/" + filename,
+            )
+
 
 def remove_empty_folders(sorted_path: str):
     for key in extensions:
-        if len(os.listdir(sorted_path + '/' + key)) == 0:
+        if len(os.listdir(sorted_path + "/" + key)) == 0:
             try:
-                pathlib.Path(sorted_path + '/' + key).rmdir()
+                pathlib.Path(sorted_path + "/" + key).rmdir()
             except OSError:
                 pass
 
 
-if __name__ == '__main__':
-    download_path = '/home/{}/Downloads'.format(getpass.getuser())
-    sorted_path = download_path + '/sorted'
+if __name__ == "__main__":
+    download_path = "/home/{}/Downloads".format(getpass.getuser())
+    sorted_path = download_path + "/sorted"
     pathlib.Path(sorted_path).mkdir(exist_ok=True)
 
     create_folders(sorted_path)
     sort_files(download_path)
     remove_empty_folders(sorted_path)
-    
